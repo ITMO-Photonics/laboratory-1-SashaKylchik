@@ -1,26 +1,40 @@
-
 import numpy as np
-import scipy.optimize as opt
+import timeit
+from scipy import optimize
 
+x=np.linspace(0.1,2.4,100)
 def f(x):
-    return (np.cos(x)/(1+x**2))
+	return (np.cos(x)/(1.+x*x))
+#производная
+def fprime(x):
+	return (-np.sin(x)*(1.+x*x)-2.*x*np.cos(x))/((1.+x*x)**2)
 
-a=0.1
-b=2.4
+print ('метод биссектрис')
+start = timeit.default_timer()
+root1 = optimize.bisect(f,0.1,2.4)
+stop = timeit.default_timer()-start
+print (root1)
+print(stop)
 
-if( f(a)*f(b)>0. ):
-    print('Error: f(a) and f(b) should have opposite signs! Stopping.')
+print('метод секущей')
+start = timeit.default_timer()
+root2 = optimize.newton(f,1.5)
+stop = timeit.default_timer()-start
+print (root2)
+print(stop)
 
-x=np.linspace(0.,5.,100)
+print('метод Ньютона')
+start = timeit.default_timer()
+root3 = optimize.newton(f,1.5,fprime)
+stop = timeit.default_timer()-start
+print (root3)
+print(stop)
 
-brentq=opt.brentq(f,0.1,2.4)
-bisect=opt.bisect(f,0.1,2.4)
-newton=opt.newton(f, 0.1)
+print('метод Брента')
+start = timeit.default_timer()
+root4 = optimize.brentq(f,0.1,2.4)
+stop = timeit.default_timer()-start
+print (root4)
+print(stop)
 
 
-
-get_ipython().run_line_magic('timeit', 'opt.brentq(f,0.1,2.4) # time of brentq function processing')
-
-get_ipython().run_line_magic('timeit', 'opt.bisect(f,0.1,2.4) # time of bisect function processing')
-
-get_ipython().run_line_magic('timeit', 'opt.newton(f, 2.4) # time of newton function processing')
